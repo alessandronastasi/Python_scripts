@@ -5,11 +5,11 @@ This script writes/updates a table into a a PostgreSQL Database
 from a FITS file. 
 The database can be local or defined on a server (default is 'idc-db1').
 
-Its usage is:
+Syntax:
 
 $ python ingest_dataset_from_FITS.py <file>.fits
 
-@author: Alessandro NASTASI for IAS 16-02-2015
+@author: Alessandro NASTASI - 26-02-2015
 """
 
 import psycopg2
