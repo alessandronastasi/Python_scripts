@@ -1,4 +1,15 @@
 #!/usr/bin/python
+"""
+This script compare two FITS tables giong through their fields
+properties and values. 
+A detailed report is finally written into an external file. 
+
+Syntax:
+
+$ python compare_FITS.py <fits_file_1> <fits_file_2>
+
+@author: Alessandro NASTASI - 26-02-2015
+"""
 
 import pyfits
 import numpy as np
