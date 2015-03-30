@@ -4,6 +4,8 @@ Functions handling datetime vectors and producing histograms in bins of
 - days
 - weekdays
 - daytime
+
+In addition, the timezones offsets are handled as well by the function get_gmtOffset()
 '''
 
 def hist_days(date_vector, lim_inf, lim_sup, dt = 1): # Default = 1day bin
