@@ -6,7 +6,7 @@ Functions handling datetime vectors and producing histograms in bins of
 - daytime
 '''
 
-def hist_date(date_vector, lim_inf, lim_sup, dt = 1): # Default = 1day bin
+def hist_days(date_vector, lim_inf, lim_sup, dt = 1): # Default = 1day bin
   '''
   Create the bin of a datetime vector.
   Input:
