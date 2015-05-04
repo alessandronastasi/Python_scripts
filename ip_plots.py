@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # ******************************************************************************
-#    Copyright 2015 IAS - IDOC
+#    Copyright 2015 - Alessandro Nastasi
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,9 +17,9 @@
 #
 # ******************************************************************************
 '''
-This script plots the date/time statistics extracted from a log file.
+This script plots the date/time IP statistics extracted from a log file.
 
-@author: Alessandro NASTASI for IAS - IDOC 
+@author: Alessandro NASTASI
 @date: 04/05/2015
 '''
 __author__ = "Alessandro Nastasi"
