@@ -1,20 +1,45 @@
 #!/usr/bin/python
-"""
-This script writes/updates a table into a a PostgreSQL Database 
-(dafault is 'DATABASE_NAME') reading data and columns formats directly 
-from a FITS file. 
-The database can be local or defined on a server (default is 'idc-db1').
 
-Syntax:
+# ******************************************************************************
+#    Copyright 2015 IAS - IDOC
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+# ******************************************************************************
+
+'''
+This script writes/updates a table into a PostgreSQL Database 
+reading data and columns format directly from a FITS file. 
+
+The database can be local or on a remote server.
+
+Its syntax is:
 
 $ python ingest_dataset_from_FITS.py <file>.fits
 
-@author: Alessandro NASTASI - 26-02-2015
-"""
+@author: Alessandro NASTASI for IAS - IDOC 
+@date: 24/04/2015
+'''
+
+__author__ = "Alessandro Nastasi"
+__credits__ = ["Alessandro Nastasi", "Karin Dassas"]
+__license__ = "GPL"
+__version__ = "1.0"
+__date__ = "24/04/2015"
 
 import psycopg2
 import pyfits
-#from pandas import read_csv
 
 import numpy as np
 import os, sys, re, math
@@ -30,21 +55,22 @@ class bcolors:
 
 PSQL_FORMAT = {
   'L' : 'boolean DEFAULT false',
-  #'X':  '',   #bit                            
-  #'B':  '',   #Unsigned byte                  
+  #'X':  'TBD',   #bit                            
+  #'B':  'TBD',   #Unsigned byte                  
   'I' : 'integer DEFAULT (-1) NOT NULL',
   'J' : 'real DEFAULT (- (1.6375E+30::numeric)::real)',
   'K' : 'real DEFAULT (- (1.6375E+30::numeric)::real)',
   'E' : 'real DEFAULT (- (1.6375E+30::numeric)::real)',
   'D' : 'real DEFAULT (- (1.6375E+30::numeric)::real)',
-  'A' : 'character varying(1027)' # % fits_format.split(char)[0],
-  #'C' :  '', #single precision complex       
-  #'M': psql_format =  '', #double precision complex       
-  #'P': psql_format =  '', #array descriptor               
-  #'Q': psql_format =  ''  #array descriptor               
+  'A' : 'character varying(1027)'
+  #'C': 'TBD', #single precision complex       
+  #'M': 'TBD', #double precision complex       
+  #'P': 'TBD', #array descriptor               
+  #'Q': 'TBD'  #array descriptor               
   }
 
 def convert_into_SQL_format(fits_format):
+  """Convert from FITS to PSQL formats"""
   formats = 'LXBIJKAEDCMPQ'
   psql_format = ''
   for char in formats:
@@ -63,7 +89,7 @@ def RADECtoXYZ(RA,DEC):
   ResultXYZ=[X,Y,Z]
   return ResultXYZ 
 
-dbname = "'DATABASE_NAME'"	#<--- Customize here
+dbname = "'<database_name>'"	#<--- Customize here
 
 if (len(sys.argv) > 1):
     filename = sys.argv[1] 
@@ -71,7 +97,7 @@ else:
     print bcolors.WARNING +  "\n\tSintax:\t$ python ingest_dataset_from_FITS.py <file>.fits\n" + bcolors.ENDC
     os._exit(0)
 
-host = raw_input("\n> Where is the dataset to update/create? (enter 0 to exit)\n\t- localhost [1]\n\t- on the server "+bcolors.WARNING+'idc-db1'+bcolors.ENDC+" [2]\n\t--> ")
+host = raw_input("\n> Where is the dataset to update/create? (enter 0 to exit)\n\t- localhost [1]\n\t- remote server "+bcolors.WARNING+'<server_name>'+bcolors.ENDC+" [2]\n\t--> ")
 choice = False
 
 while not choice:
@@ -83,9 +109,9 @@ while not choice:
     choice = True
       
   elif host=='2':
-    #IDC-DB1
-    user = "'username'"  #<--- Customize here
-    host = "'idc-db1'"	 #<--- Customize here
+    #REMOTE SERVER
+    user = "'<username>'" 	#<--- Customize here
+    host = "'<server_name>'"	#<--- Customize here
     pwd = "''"
     choice = True
     
@@ -115,10 +141,7 @@ conn = psycopg2.connect("dbname="+dbname+" user="+user+" host="+host+" password=
 #Create the Psycopg object
 cur = conn.cursor()
 
-# *** Read the columns to INSERT INTO the table ***
-
-start = time() #Just to monitor the execution time
-
+#Read the columns to INSERT INTO the table
 if input_mode == 'fits':
   print '\n- Reading/storing data from FITS table (it may take some time. Please wait...)'
   data = fileInput[1].data
@@ -128,8 +151,6 @@ if input_mode == 'fits':
   fields = (data.names)
   fields_format = (data.formats)
   data2D = [[data[field][i] for field in fields] for i in range(table_size)] #Storing all in a 2D array, but without the name line
-
-# *************************************************
 
 #Create a TABLE 
 table = False
@@ -152,7 +173,7 @@ if table:
       conn = psycopg2.connect("dbname="+dbname+" user="+user+" host="+host+" password="+pwd+"")
       cur = conn.cursor()
       cur.execute("DROP TABLE "+dataset+" CASCADE;")
-      print '\n\t- Dataset '+bcolors.OKGREEN+"'%s'" % dataset +bcolors.ENDC+' and all his dependencies successfully dropped.'
+      print '\n\t- Dataset %s and all his dependencies successfully dropped.' % dataset
     else:
       print "\n- Exit.\n"; os._exit(0)
       
@@ -182,7 +203,7 @@ cur.execute(createTable_cmd)
 
 #Fill in the columns
 for i in range(table_size):
-  sys.stdout.write("- Filling the table...%s%%\r" % (int(100*(i/(1.0*table_size))) ) )
+  sys.stdout.write("- Filling the %sth row of the table...\r" % i)
   sys.stdout.flush()
   toExecute = "INSERT INTO %s (id " % dataset
   for field in fields: toExecute += ", %s" % field
@@ -190,18 +211,14 @@ for i in range(table_size):
   for j, field in enumerate(fields):
 
     if fields_string_length[j]>1:
-      if str(data2D[i][j]) == '-': 	toExecute += ", NULL"
-      else:				toExecute += ", '%s'" % data2D[i][j]
+      toExecute += ", '%s'" % data2D[i][j]
     else:
       if str(data2D[i][j]) == 'nan': toExecute += ", NULL"
       else: toExecute += ", %s" % data2D[i][j]
 
   toExecute +=")"
   cur.execute(toExecute)
-  if i == table_size-1: sys.stdout.write("- Filling the table...100% - "+bcolors.OKGREEN+"[OK]"+bcolors.ENDC+"\r")
-stop = time()
-
-delta_t = stop-start; print '\n\n< time: %s sec >' % delta_t
+  if i == table_size-1: sys.stdout.write("- Filling the %sth row of the table..." % i +bcolors.OKGREEN+"\t[OK]"+bcolors.ENDC+"\r")
 
 #Apply the changes -> create the actual database
 conn.commit()
@@ -211,3 +228,4 @@ cur.close()
 conn.close()
 
 print "\n--> The dataset "+bcolors.OKGREEN+"'%s'" % dataset+bcolors.ENDC+" has been updated/created into the "+bcolors.OKBLUE+dbname+bcolors.ENDC+" database in host: "+bcolors.OKBLUE+host+bcolors.ENDC+".\n"
+
