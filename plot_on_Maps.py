@@ -17,8 +17,8 @@
 #
 # ******************************************************************************
 '''
-This script generates an HTML file where the number and locations of the IP visits 
-are plotted on Google Maps.
+This script generates an HTML file where the number and IP locations 
+are plotted on Google Maps as heatmap and markers, respectively.
 @author: Alessandro NASTASI
 @date: 13/05/2015
 '''
