@@ -1,8 +1,3 @@
-import sys
-import math
-import numpy
-import string
-
 """module for coordinate manipulation (conversions, calculations etc.)
 
 (c) 2007-2012 Matt Hilton
@@ -256,7 +251,7 @@ def calcAngSepDeg(RA1, dec1, RA2, dec2):
     ***** Updates added by Alessandro Nastasi - 26/06/2014 *****
 
     Now RA and DEC can be entered indifferently as decimal degrees or as 
-    hh mm hh:mm:ss.s or hh mm ss.s (provided that they are passed as STRING
+    hh:mm:ss.s or hh mm ss.s (provided that they are passed as STRING
     in the latter two cases). An internal routine recognizes the correct format 
     and converts them into decimal degrees.
  
