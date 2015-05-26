@@ -1,7 +1,7 @@
 #! /usr/bin/python
 
 # ******************************************************************************
-#    Copyright 2015 IAS - IDOC
+#    Copyright 2015 - Alessandro Nastasi
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
